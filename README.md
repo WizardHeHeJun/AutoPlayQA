@@ -34,6 +34,10 @@
 - 🎯 点击 / 拖拽 / 文本输入 / 按键 / 等待
 - ✋ **无 root 多指手势**：`app_process` 拉起轻量 dex helper 走系统隐藏 `injectInputEvent`（与 `input` 同特权路径），免 root、免写 `/dev/input`（现代 MIUI / HyperOS 对 shell 域已 SELinux 封禁）即可注入多指 MotionEvent；`gesture` 动作收 `frames` 帧序列或 `pinch` 便捷参数，解决双指缩放 / 旋转 / 双指拖拽等动态手势瓶颈（dex 不入库，按 `injector/build.ps1` 从可审源码自建）
 
+<p align="center"><img src="docs/images/som_marked_demo.svg" width="760" alt="Set-of-Marks 标注示意：左边原始截图，右边同一界面叠加序号徽标，红色标可点控件、蓝色标纯文本，智能体按号 click_index 点击"></p>
+
+*Set-of-Marks 标注图示意（合成界面，非真实游戏截图）：`screenshot_marked` 给可点控件打红色序号、纯文本打蓝色序号并返回索引元素表，智能体接手时 `click_index(N)` 按号点击，不必猜坐标。*
+
 ### 任务引擎（确定性重放）
 
 - 🔁 识别门控任务引擎：任务 JSON 状态机（识别确认到达预期界面才执行动作），支持分支、超时恢复、断点续跑——一次操作，零 token 重放
@@ -54,6 +58,10 @@
 - 🧾 **证据保留**：`outputs/findings/<日期>/<设备>/<run_id>/` 自包含可浏览，启动按 `findings.retention_days`（默认 14 天）清理过期日期目录；配 `findings.export_dir` 后有 finding 的运行自动打成单个 zip（`时间戳_任务_设备_状态.zip`）
 - 🛰️ **空窗期哨兵**：任务跑完 / `agent` 交接期间，引擎那一轮的 run 已封口，屏幕和 logcat 本来无人看管——后台帧监控挂一个哨兵，**白吃已有的帧**（不加截图、不加 adb 来回）继续查白屏卡死（连续 N 帧灰度 stddev 低于阈值算一次 episode，只报一次、恢复后重新武装）与 crash / ANR，命中就写成一次普通的 findings run（任务名 `monitor_sentinel`），证据补一张无损原图。按设备门控：引擎在跑 A 机时 B 机的哨兵照看不误
 - 📣 **结果推送**：无人值守跑完不必等人去翻目录——配 `findings.notifiers`（飞书自定义机器人 / 通用 webhook）后，每个 run 收尾推**一条**中文汇总（任务 / 设备 / 状态 / 各级别计数 / 前 3 条 finding / 报告与证据包路径）；`min_findings`、`on_status` 过滤，干净跑完默认不吵人，推送失败只记日志、绝不影响运行结果
+
+<p align="center"><img src="docs/images/findings_report_demo.svg" width="680" alt="findings 离线报告 report.html 结构示意：报告标题栏与状态徽章、error 级 finding 卡片含证据截图与字段、内嵌录屏播放器、logcat 片段与流程时间线折叠区"></p>
+
+*离线报告 `report.html` 结构示意（合成界面，非真实游戏截图）：一条 finding = 出错那一帧的证据截图 + 字段 + 内嵌录屏 + 可折叠的 logcat 片段与流程时间线；零外链单文件，双击离线可开、转发不坏。*
 
 ### 性能与接入
 
@@ -165,7 +173,7 @@ flowchart TD
 }
 ```
 
-需要智能判断的步骤用 `agent` 动作：引擎挂起并返回 `status=agent_required` + 指令文本，智能体用设备工具完成该步后 `run_task(start_after=<节点>)` 续跑。完整格式见 `get_task_schema` 或 `action/action_schema.py`。
+需要智能判断的步骤用 `agent` 动作：引擎挂起并返回 `status=agent_required` + 指令文本，智能体用设备工具完成该步后 `run_task(start_after=<节点>)` 续跑。完整格式见 `get_task_schema` 或 `action/action_schema.py`，交接一来一回的时序图见 [docs/MCP_INTEGRATION.md](docs/MCP_INTEGRATION.md#agent-交接识别到人类判断步骤怎么办)。
 
 **步号（step）**：节点可带一个**只供阅读**的 `step` 步号标识执行顺序——主干（从 `entry` 沿 `next[0]` 走）是整数 `1, 2, 3…`，兜底分支（`on_timeout` / `next[1:]`）挂点号如 `2.1`、`2.1.1`，不可达节点为 `?`。任务是图不是列表，光顺着 JSON 从上往下读看不出执行顺序，步号让人/智能体一眼定位某节点在流程里的位置。**引擎不读它**，纯导航用。步号从图实时算出：CLI `task renumber <name>` 按当前图重算并把 `step` 写回文件（置于节点首位），`task show <name>` 先打印按步号排序的流程大纲再打印原文；MCP `get_task` 额外返回 `_steps`（名→步号映射）+ `_step_outline`（流程清单）。编辑任务后重跑 renumber 即刷新，不会留下错位的旧号。
 

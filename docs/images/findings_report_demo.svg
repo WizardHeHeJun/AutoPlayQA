@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="500" viewBox="0 0 720 500" font-family="-apple-system, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+  <title>findings 离线报告 report.html 结构示意（合成界面，非真实游戏截图）</title>
+
+  <rect x="0" y="0" width="720" height="500" rx="10" ry="10" fill="#ffffff"/>
+  <rect x="0.5" y="0.5" width="719" height="499" rx="10" ry="10" fill="none" stroke="#d0d7de" stroke-width="1"/>
+
+  <!-- 浏览器窗口栏 -->
+  <path d="M0,10 a10,10 0 0 1 10,-10 h700 a10,10 0 0 1 10,10 v34 h-720 z" fill="#f0f2f5"/>
+  <line x1="0" y1="44" x2="720" y2="44" stroke="#e1e6ec" stroke-width="1"/>
+  <circle cx="22" cy="22" r="5" fill="#ff5f56"/>
+  <circle cx="40" cy="22" r="5" fill="#ffbd2e"/>
+  <circle cx="58" cy="22" r="5" fill="#27c93f"/>
+  <rect x="78" y="10" width="598" height="24" rx="6" ry="6" fill="#ffffff" stroke="#dde2e8"/>
+  <text x="90" y="26" font-size="10.5" font-family="ui-monospace, Consolas, monospace" fill="#57606a">file:///.../outputs/findings/2026-08-20/DEVICE_A/run_143201/report.html</text>
+
+  <!-- 报告标题栏 -->
+  <text x="28" y="80" font-size="16" font-weight="600" fill="#24292f">AutoPlayQA 运行报告</text>
+  <text x="28" y="102" font-size="11.5" fill="#57606a">任务 example_task · 设备 DEVICE_A · 2026-08-20 14:32 · 用时 96s · 12 步</text>
+  <rect x="576" y="64" width="116" height="26" rx="13" ry="13" fill="#fdecec" stroke="#f3c0c0"/>
+  <text x="634" y="81" text-anchor="middle" font-size="12" font-weight="600" fill="#b42318">完成 · 1 error</text>
+  <line x1="28" y1="118" x2="692" y2="118" stroke="#eaeef2" stroke-width="1"/>
+
+  <!-- finding 卡片 -->
+  <rect x="28" y="134" width="664" height="158" rx="8" ry="8" fill="#fffafa" stroke="#f0d0d0"/>
+  <path d="M28,142 a8,8 0 0 1 8,-8 h2 v158 h-2 a8,8 0 0 1 -8,-8 z" fill="#d1242f"/>
+
+  <rect x="46" y="148" width="52" height="20" rx="10" ry="10" fill="#d1242f"/>
+  <text x="72" y="162" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">error</text>
+  <text x="108" y="163" font-size="13" font-weight="600" fill="#24292f">检测到禁止文案「网络错误」</text>
+
+  <!-- 证据截图占位 -->
+  <rect x="46" y="180" width="150" height="92" rx="6" ry="6" fill="#eceff3" stroke="#d8dee6"/>
+  <circle cx="102" cy="200" r="5" fill="#cfd6de"/>
+  <path d="M82,224 L102,204 L126,224 Z" fill="#cfd6de"/>
+  <text x="121" y="242" text-anchor="middle" font-size="11.5" fill="#57606a">证据截图</text>
+  <text x="121" y="258" text-anchor="middle" font-size="10.5" fill="#8c959f">钉在「出错那一帧」</text>
+
+  <!-- 字段 -->
+  <g font-size="11">
+    <text x="216" y="196" fill="#8c959f">severity</text>
+    <text x="300" y="196" font-family="ui-monospace, Consolas, monospace" fill="#24292f">error</text>
+    <text x="216" y="220" fill="#8c959f">message</text>
+    <text x="300" y="220" fill="#24292f">禁止文案出现在结算界面</text>
+    <text x="216" y="244" fill="#8c959f">node</text>
+    <text x="300" y="244" font-family="ui-monospace, Consolas, monospace" fill="#24292f">结算页 · step 3</text>
+    <text x="216" y="268" fill="#8c959f">evidence</text>
+    <text x="300" y="268" font-family="ui-monospace, Consolas, monospace" fill="#24292f">screenshot.png · ui_dump.xml · logcat.txt · clip.mp4</text>
+  </g>
+
+  <!-- 内嵌录屏播放器 -->
+  <text x="28" y="316" font-size="11.5" fill="#57606a">飞行记录仪 · 内嵌录屏（问题前约 60 秒）</text>
+  <rect x="28" y="326" width="664" height="44" rx="8" ry="8" fill="#f5f7f9" stroke="#e1e6ec"/>
+  <path d="M48,338 L48,358 L66,348 Z" fill="#24292f"/>
+  <rect x="82" y="345.5" width="500" height="5" rx="2.5" ry="2.5" fill="#d8dee6"/>
+  <rect x="82" y="345.5" width="170" height="5" rx="2.5" ry="2.5" fill="#1f6feb"/>
+  <circle cx="252" cy="348" r="6" fill="#1f6feb" stroke="#ffffff" stroke-width="1.5"/>
+  <text x="600" y="352" font-size="11" font-family="ui-monospace, Consolas, monospace" fill="#57606a">00:12 / 01:00</text>
+
+  <!-- 折叠区 -->
+  <rect x="28" y="384" width="664" height="32" rx="6" ry="6" fill="#f7f9fb" stroke="#e6eaef"/>
+  <text x="46" y="404" font-size="12" fill="#24292f">▸  logcat 片段（崩溃 / 报错上下文）</text>
+  <rect x="28" y="424" width="664" height="32" rx="6" ry="6" fill="#f7f9fb" stroke="#e6eaef"/>
+  <text x="46" y="444" font-size="12" fill="#24292f">▸  流程时间线（问题前的每一步识别与动作）</text>
+
+  <text x="28" y="480" font-size="11" fill="#8c959f">零外链单文件 · 双击离线可开 · 截图内嵌 &lt;img&gt; · 录屏内嵌 &lt;video&gt; · 打包转发也不坏</text>
+</svg>

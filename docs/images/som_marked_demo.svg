@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="520" viewBox="0 0 820 520" font-family="-apple-system, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+  <title>Set-of-Marks 标注图示意（合成界面，非真实游戏截图）</title>
+
+  <rect x="0" y="0" width="820" height="520" rx="12" ry="12" fill="#f6f8fa"/>
+  <rect x="0.5" y="0.5" width="819" height="519" rx="12" ry="12" fill="none" stroke="#d0d7de" stroke-width="1"/>
+
+  <text x="40" y="30" font-size="15" font-weight="600" fill="#24292f">Set-of-Marks 标注：截图叠序号，智能体按号点击</text>
+
+  <text x="210" y="58" text-anchor="middle" font-size="13" fill="#3d4450">① 原始截图 screenshot</text>
+  <text x="610" y="58" text-anchor="middle" font-size="13" fill="#3d4450">② 标注图 screenshot_marked</text>
+
+  <!-- ===== 左：原始截图 ===== -->
+  <g transform="translate(60,70)">
+    <rect x="0" y="0" width="300" height="372" rx="14" ry="14" fill="#ffffff" stroke="#ccd3da" stroke-width="1.5"/>
+    <rect x="10" y="10" width="280" height="352" fill="#fdfdfe"/>
+
+    <rect x="10" y="10" width="280" height="40" fill="#eef2f7"/>
+    <text x="150" y="35" text-anchor="middle" font-size="13" font-weight="600" fill="#24292f">示例应用</text>
+
+    <rect x="18" y="68" width="84" height="34" rx="6" ry="6" fill="#ffffff" stroke="#ccd3da"/>
+    <text x="60" y="90" text-anchor="middle" font-size="12.5" fill="#24292f">设置</text>
+    <rect x="108" y="68" width="84" height="34" rx="6" ry="6" fill="#ffffff" stroke="#ccd3da"/>
+    <text x="150" y="90" text-anchor="middle" font-size="12.5" fill="#24292f">商店</text>
+    <rect x="198" y="68" width="84" height="34" rx="6" ry="6" fill="#ffffff" stroke="#ccd3da"/>
+    <text x="240" y="90" text-anchor="middle" font-size="12.5" fill="#24292f">背包</text>
+
+    <text x="18" y="128" font-size="12" fill="#57606a">公告：服务器维护通知</text>
+    <rect x="18" y="136" width="250" height="7" rx="3.5" ry="3.5" fill="#e8ecf1"/>
+    <rect x="18" y="149" width="170" height="7" rx="3.5" ry="3.5" fill="#e8ecf1"/>
+
+    <rect x="18" y="172" width="264" height="104" rx="8" ry="8" fill="#f8fafc" stroke="#e3e8ee"/>
+    <text x="30" y="196" font-size="12.5" fill="#24292f">网络错误</text>
+    <rect x="30" y="206" width="200" height="7" rx="3.5" ry="3.5" fill="#e8ecf1"/>
+    <rect x="30" y="219" width="150" height="7" rx="3.5" ry="3.5" fill="#e8ecf1"/>
+    <rect x="110" y="240" width="80" height="28" rx="6" ry="6" fill="#ffffff" stroke="#ccd3da"/>
+    <text x="150" y="258" text-anchor="middle" font-size="12" fill="#24292f">取消</text>
+    <rect x="198" y="240" width="80" height="28" rx="6" ry="6" fill="#1f6feb"/>
+    <text x="238" y="258" text-anchor="middle" font-size="12" fill="#ffffff">确认</text>
+
+    <rect x="10" y="312" width="280" height="50" fill="#eef2f7"/>
+    <circle cx="57" cy="330" r="6" fill="#c7d0d9"/>
+    <circle cx="150" cy="330" r="6" fill="#c7d0d9"/>
+    <circle cx="243" cy="330" r="6" fill="#c7d0d9"/>
+    <text x="57" y="352" text-anchor="middle" font-size="11" fill="#57606a">首页</text>
+    <text x="150" y="352" text-anchor="middle" font-size="11" fill="#57606a">消息</text>
+    <text x="243" y="352" text-anchor="middle" font-size="11" fill="#57606a">我的</text>
+  </g>
+
+  <!-- ===== 箭头 ===== -->
+  <text x="410" y="246" text-anchor="middle" font-size="11" fill="#57606a">叠加序号徽标</text>
+  <line x1="368" y1="258" x2="444" y2="258" stroke="#8c959f" stroke-width="2"/>
+  <path d="M452,258 L441,252.5 L441,263.5 Z" fill="#8c959f"/>
+
+  <!-- ===== 右：标注图 ===== -->
+  <g transform="translate(460,70)">
+    <rect x="0" y="0" width="300" height="372" rx="14" ry="14" fill="#ffffff" stroke="#ccd3da" stroke-width="1.5"/>
+    <rect x="10" y="10" width="280" height="352" fill="#fdfdfe"/>
+
+    <rect x="10" y="10" width="280" height="40" fill="#eef2f7"/>
+    <text x="150" y="35" text-anchor="middle" font-size="13" font-weight="600" fill="#24292f">示例应用</text>
+
+    <rect x="18" y="68" width="84" height="34" rx="6" ry="6" fill="#ffffff" stroke="#ccd3da"/>
+    <text x="60" y="90" text-anchor="middle" font-size="12.5" fill="#24292f">设置</text>
+    <rect x="108" y="68" width="84" height="34" rx="6" ry="6" fill="#ffffff" stroke="#ccd3da"/>
+    <text x="150" y="90" text-anchor="middle" font-size="12.5" fill="#24292f">商店</text>
+    <rect x="198" y="68" width="84" height="34" rx="6" ry="6" fill="#ffffff" stroke="#ccd3da"/>
+    <text x="240" y="90" text-anchor="middle" font-size="12.5" fill="#24292f">背包</text>
+
+    <text x="18" y="128" font-size="12" fill="#57606a">公告：服务器维护通知</text>
+    <rect x="18" y="136" width="250" height="7" rx="3.5" ry="3.5" fill="#e8ecf1"/>
+    <rect x="18" y="149" width="170" height="7" rx="3.5" ry="3.5" fill="#e8ecf1"/>
+
+    <rect x="18" y="172" width="264" height="104" rx="8" ry="8" fill="#f8fafc" stroke="#e3e8ee"/>
+    <text x="30" y="196" font-size="12.5" fill="#24292f">网络错误</text>
+    <rect x="30" y="206" width="200" height="7" rx="3.5" ry="3.5" fill="#e8ecf1"/>
+    <rect x="30" y="219" width="150" height="7" rx="3.5" ry="3.5" fill="#e8ecf1"/>
+    <rect x="110" y="240" width="80" height="28" rx="6" ry="6" fill="#ffffff" stroke="#ccd3da"/>
+    <text x="150" y="258" text-anchor="middle" font-size="12" fill="#24292f">取消</text>
+    <rect x="198" y="240" width="80" height="28" rx="6" ry="6" fill="#1f6feb"/>
+    <text x="238" y="258" text-anchor="middle" font-size="12" fill="#ffffff">确认</text>
+
+    <rect x="10" y="312" width="280" height="50" fill="#eef2f7"/>
+    <circle cx="57" cy="330" r="6" fill="#c7d0d9"/>
+    <circle cx="150" cy="330" r="6" fill="#c7d0d9"/>
+    <circle cx="243" cy="330" r="6" fill="#c7d0d9"/>
+    <text x="57" y="352" text-anchor="middle" font-size="11" fill="#57606a">首页</text>
+    <text x="150" y="352" text-anchor="middle" font-size="11" fill="#57606a">消息</text>
+    <text x="243" y="352" text-anchor="middle" font-size="11" fill="#57606a">我的</text>
+
+    <!-- 红色徽标：可点控件 -->
+    <g font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">
+      <circle cx="22" cy="72" r="10" fill="#d1242f" stroke="#ffffff" stroke-width="1.5"/>
+      <text x="22" y="76">1</text>
+      <circle cx="112" cy="72" r="10" fill="#d1242f" stroke="#ffffff" stroke-width="1.5"/>
+      <text x="112" y="76">2</text>
+      <circle cx="202" cy="72" r="10" fill="#d1242f" stroke="#ffffff" stroke-width="1.5"/>
+      <text x="202" y="76">3</text>
+      <circle cx="114" cy="244" r="10" fill="#d1242f" stroke="#ffffff" stroke-width="1.5"/>
+      <text x="114" y="248">4</text>
+      <circle cx="202" cy="244" r="10" fill="#d1242f" stroke="#ffffff" stroke-width="1.5"/>
+      <text x="202" y="248">5</text>
+      <circle cx="40" cy="322" r="10" fill="#d1242f" stroke="#ffffff" stroke-width="1.5"/>
+      <text x="40" y="326">6</text>
+    </g>
+
+    <!-- 蓝色徽标：纯文本 -->
+    <g font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">
+      <circle cx="152" cy="122" r="10" fill="#0969da" stroke="#ffffff" stroke-width="1.5"/>
+      <text x="152" y="126">7</text>
+      <circle cx="94" cy="190" r="10" fill="#0969da" stroke="#ffffff" stroke-width="1.5"/>
+      <text x="94" y="194">8</text>
+    </g>
+  </g>
+
+  <!-- ===== 图例 ===== -->
+  <circle cx="52" cy="470" r="9" fill="#d1242f"/>
+  <text x="52" y="474" text-anchor="middle" font-size="10" font-weight="700" fill="#ffffff">1</text>
+  <text x="70" y="474" font-size="12" fill="#3d4450">红 = 可点控件（按钮 / 底部导航）</text>
+
+  <circle cx="330" cy="470" r="9" fill="#0969da"/>
+  <text x="330" y="474" text-anchor="middle" font-size="10" font-weight="700" fill="#ffffff">7</text>
+  <text x="348" y="474" font-size="12" fill="#3d4450">蓝 = 纯文本（不可点，只帮智能体理解画面）</text>
+
+  <text x="40" y="500" font-size="11.5" fill="#57606a">智能体拿到索引元素表后直接 <tspan font-family="ui-monospace, Consolas, monospace" fill="#24292f">click_index(3)</tspan> 点中 3 号「背包」——交接免猜坐标。</text>
+</svg>

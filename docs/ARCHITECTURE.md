@@ -96,7 +96,21 @@ flowchart TD
 
 ## findings 取证链路
 
-**核心原则：异常 = 测试发现**，检测到就要留证上报，不是要静默绕过的噪音。
+**核心原则：异常 = 测试发现**，检测到就要留证上报，不是要静默绕过的噪音。整条链路从"谁发现"一直走到"证据怎么交到人手上"：
+
+```mermaid
+flowchart TD
+    W["watchdog 负向断言<br/>禁止文案 · 不该出现的白屏"] --> HIT
+    N["节点 finding 字段<br/>弹窗 · 报错分支自我上报"] --> HIT
+    L["logcat 监控<br/>crash · ANR"] --> HIT
+    HIT["触发即留证<br/>钉在触发那一帧的截图，失败额外附 ui_dump"] --> BOX["飞行记录仪 黑匣子<br/>问题前约 60s：logcat 片段 · 流程时间线 · 滚动录屏 MP4"]
+    BOX --> REP["run 收尾落盘<br/>report.json + 自包含离线 report.html"]
+    REP --> KEEP["保留策略<br/>retention_days 清理过期日期目录"]
+    REP --> ZIP["导出<br/>有 finding 的运行打成单个 zip 证据包"]
+    REP --> PUSH["推送<br/>飞书机器人 / 通用 webhook 一条中文汇总"]
+```
+
+*取证链路示意：三类触发汇到同一条留证管线，任务成功也照列 findings。*
 
 **三类触发**（不依赖任何 debug 开关，始终生效）：
 

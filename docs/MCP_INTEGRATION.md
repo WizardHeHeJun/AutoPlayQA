@@ -127,7 +127,31 @@ args = ["C:\\path\\to\\autoplayqa\\mcp_server.py"]
 
 ## agent 交接：识别到人类判断步骤怎么办
 
-任务里的 `agent` 动作（`llm` 为兼容别名）代表"这一步需要智能判断，引擎自己做不了"。引擎识别到该节点后**不会执行动作**，而是挂起并返回：
+任务里的 `agent` 动作（`llm` 为兼容别名）代表"这一步需要智能判断，引擎自己做不了"。引擎识别到该节点后**不会执行动作**，而是挂起并返回一份交接指令，等智能体做完那一步再从该节点之后续跑：
+
+```mermaid
+sequenceDiagram
+    participant A as 外部智能体
+    participant M as MCP 服务器
+    participant E as 任务引擎
+    participant D as 设备
+    A->>M: run_task 任务名
+    M->>E: 启动识别门控回放
+    E->>D: 逐节点识别锚点并执行动作
+    D-->>E: 屏幕帧 / 控件树
+    Note over E: 走到 agent 动作节点，不执行、挂起
+    E-->>M: status=agent_required + handoff
+    M-->>A: 交接节点名 + 指令文本
+    A->>M: screenshot_marked / click_index / swipe
+    M->>D: adb 动作
+    D-->>A: 该步完成，人工判断已落地
+    A->>M: run_task start_after=交接节点名
+    M->>E: 从该节点之后续跑
+    E->>D: 继续识别门控回放
+    E-->>A: status=done + findings + report
+```
+
+挂起时的返回结构：
 
 ```json
 {
