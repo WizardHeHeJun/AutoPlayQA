@@ -493,13 +493,13 @@ def find_template(device_id: str, template: str, threshold: float = 0.8,
 
     This is the eye for game-surface graphics the text channels are blind to:
     uiautomator sees no nodes on a single render surface and OCR only reads
-    labels, so a barracks vs. a resource field (pure sprites) need template
+    labels, so sprite-only buildings and icons (pure images) need template
     matching. Capture the template first with capture_template, then match it.
 
     template: a stored template name (file stem under task/templates/) or a
     path. threshold: TM_CCOEFF_NORMED correlation gate in [0,1] (0.8 default;
     lower = more lenient). roi: optional [x1,y1,x2,y2] to search within.
-    multi: True returns every instance (e.g. all barracks), else the best one.
+    multi: True returns every instance (e.g. every crate icon), else the best one.
     scales: optional sizes to sweep for resolution robustness, e.g.
     [0.9, 1.0, 1.1]; default matches at native size only.
 

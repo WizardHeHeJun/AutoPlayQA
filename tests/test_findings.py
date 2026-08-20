@@ -1229,10 +1229,10 @@ def install_fake_adb_channels(monkeypatch, date_out: str, context_out: str, prio
 
 
 GAME_ERROR = (
-    "06-12 10:01:00.000 E/[mygame] (16634): [ed.Rpc] happened error: "
-    '{["code"] = 7202, ["msg"] = "[Code]: PlayerNotFound . Module: Battle"}'
+    "06-12 10:01:00.000 E/[mygame] (1234): [rpc] happened error: "
+    '{code = 1002, msg = "NotFound"}'
 )
-GAME_WARN = "06-12 10:01:00.100 W/[mygame] (16634): battle check failed"
+GAME_WARN = "06-12 10:01:00.100 W/[mygame] (1234): battle check failed"
 
 
 def noise_lines(start_ms: int, count: int) -> List[str]:
@@ -1454,7 +1454,7 @@ def test_logcat_crash_detection_unaffected_by_e_level_burst(monkeypatch):
 def test_evidence_tag_parsing_handles_slashes_and_brackets():
     lines = [
         "06-12 10:01:00.000 E/QCNEJ/WlanStaInfoRelay(719): relay down",
-        "06-12 10:01:00.001 E/[mygame] (16634): server code 7202",
+        "06-12 10:01:00.001 E/[mygame] (1234): server code 1002",
         "    continuation without its own header",
     ]
 

@@ -106,7 +106,7 @@ description: 冒烟汇报固定流程：把若干轮自动化回放的 findings 
 
 ```powershell
 # logcat 里核错误码，别凭印象写
-Select-String -Path outputs\findings\<日期>\<设备>\<run>\*_logcat.log -Pattern "1001|ServerInternal|FATAL"
+Select-String -Path outputs\findings\<日期>\<设备>\<run>\*_logcat.log -Pattern "<错误码>|FATAL"
 ```
 
 已知的两个坑（真实教训）：
@@ -169,7 +169,7 @@ outputs/bug_reports/
 | `runs` | `{key: {path, include, exclude}}`，证据来源 run 目录 + 抽哪些文件（glob） |
 | `env` | 数组（逐项标 source）或一句话字符串（写"同 BUG-00X"） |
 | `shots` | 正文内联的截图/录屏 `{run, file, title, caption}` |
-| `severity_note` `sections` `footnotes` | 可选：待确认项、换对手情况、体积裁剪说明等 |
+| `severity_note` `sections` `footnotes` | 可选：待确认项、偶发条件说明、体积裁剪说明等 |
 
 **内容块**（`actual` / `expected` / 卡片等自由段落）用块数组表达，HTML 与 MD 共用：
 `{"p": "段落"}`、`{"ul": [...]}`、`{"ol": [...]}`、`{"code": "日志原文"}`、`{"note": "警示框"}`、`{"quote": "引述"}`、`{"caption": "小字注"}`。

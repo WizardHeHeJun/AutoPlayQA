@@ -10,7 +10,7 @@ from core.logger import log_event
 
 # OpenCV template matching: the deterministic "eye" for graphics the text
 # channels can't read. uiautomator sees no nodes on a game surface and OCR only
-# reads labels, so a barracks vs. a resource field — pure sprites — are invisible
+# reads labels, so sprite-only buildings and icons — pure images — are invisible
 # to both. matchTemplate locates a known icon image by pixel correlation.
 DEFAULT_THRESHOLD = 0.8
 # IoU above which two hits are treated as the same object during NMS.

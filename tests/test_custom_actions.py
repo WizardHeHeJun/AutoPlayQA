@@ -438,8 +438,8 @@ def test_launch_app_validates_package():
 GM_PARAMS = {
     "command": "AddItem;1001;10",
     "open": {"type": "ocr", "expected": "GM"},
-    "input_box": {"type": "ocr", "expected": "拼音简称搜索"},
-    "exec_button": {"type": "ocr", "expected": "通用ASR"},
+    "input_box": {"type": "ocr", "expected": "请输入指令"},
+    "exec_button": {"type": "ocr", "expected": "执行"},
     "close": {"nx": 0.065, "ny": 0.981},
     "settle_ms": 0,
 }

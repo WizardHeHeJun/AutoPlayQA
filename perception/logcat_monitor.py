@@ -63,7 +63,7 @@ IMPORTANT_LEVELS = frozenset({"W", "E", "F"})
 # ---------------------------------------------------------------------------
 
 # The game's own logs — always top priority. A tag may end with `*` to match by
-# prefix. "[mygame]" is the log tag of the game currently under test; override
+# prefix. "[mygame]" is the log tag of the game under test; override
 # it per deployment via config (findings.logcat_evidence.business_tags).
 DEFAULT_BUSINESS_TAGS: Tuple[str, ...] = ("[mygame]",)
 

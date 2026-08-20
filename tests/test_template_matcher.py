@@ -126,11 +126,11 @@ def test_alpha_mask_ignores_transparent_background(matcher):
 
 def test_save_template_crops_and_matches(matcher, tmp_path):
     scene = _scene([(100, 50)])
-    path = matcher.save_template(scene, "barracks", region=[100, 50, 124, 74])
-    assert path.endswith("barracks.png")
-    assert "barracks" in matcher.list_templates()
+    path = matcher.save_template(scene, "crate", region=[100, 50, 124, 74])
+    assert path.endswith("crate.png")
+    assert "crate" in matcher.list_templates()
     # The saved crop should locate itself back in the same scene.
-    hit = matcher.match(scene, "barracks", threshold=0.95)
+    hit = matcher.match(scene, "crate", threshold=0.95)
     assert hit["center"] == [112, 62]
 
 
@@ -254,7 +254,7 @@ def _task_with_recognition(recognition):
 
 
 def test_validate_template_recognition_ok():
-    validate_task(_task_with_recognition({"type": "template", "template": "barracks"}))
+    validate_task(_task_with_recognition({"type": "template", "template": "crate"}))
 
 
 def test_validate_template_recognition_requires_template_field():

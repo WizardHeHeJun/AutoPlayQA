@@ -14,7 +14,7 @@ from perception.yolo_detector import YoloDetector, YoloRegistry, load_model_mani
 from task.recognizers import RecognizerHub
 from task.task_loader import TaskValidationError, validate_task
 
-NAMES = ["barracks", "farm"]
+NAMES = ["crate", "door"]
 
 
 @pytest.fixture
@@ -25,12 +25,12 @@ def detector():
 def _yolo_output():
     """A YOLOv8/v11-style (1, 4+nc, N) output: 2 real boxes + 1 dup + 5 background.
 
-    Rows are [cx, cy, w, h, cls0(barracks), cls1(farm)]; columns are anchors.
+    Rows are [cx, cy, w, h, cls0(crate), cls1(door)]; columns are anchors.
     """
     rows = [
-        [100, 100, 40, 40, 0.90, 0.10],   # barracks @ center (100,100)
-        [300, 400, 60, 20, 0.10, 0.80],   # farm @ center (300,400)
-        [102, 101, 40, 40, 0.85, 0.10],   # near-dup barracks -> NMS suppressed
+        [100, 100, 40, 40, 0.90, 0.10],   # crate @ center (100,100)
+        [300, 400, 60, 20, 0.10, 0.80],   # door @ center (300,400)
+        [102, 101, 40, 40, 0.85, 0.10],   # near-dup crate -> NMS suppressed
     ] + [[10, 10, 5, 5, 0.05, 0.05]] * 5  # background, below conf
     arr = np.array(rows, dtype=np.float32).T  # (6 channels, 8 anchors)
     return arr[None]  # (1, 6, 8)
@@ -76,7 +76,7 @@ def test_postprocess_decodes_scales_and_nms(detector):
         _yolo_output(), scale=1.0, pad=(0, 0), orig_shape=(640, 640),
         conf=0.25, iou=0.45, class_filter=None,
     )
-    assert [d["label"] for d in dets] == ["barracks", "farm"]  # best score first
+    assert [d["label"] for d in dets] == ["crate", "door"]  # best score first
     assert dets[0]["bbox"] == [80, 80, 120, 120]
     assert dets[0]["center"] == [100, 100]
     assert dets[0]["score"] == 0.9
@@ -89,7 +89,7 @@ def test_postprocess_class_filter(detector):
         _yolo_output(), scale=1.0, pad=(0, 0), orig_shape=(640, 640),
         conf=0.25, iou=0.45, class_filter={1},
     )
-    assert len(dets) == 1 and dets[0]["label"] == "farm"
+    assert len(dets) == 1 and dets[0]["label"] == "door"
 
 
 def test_postprocess_undoes_letterbox(detector):
@@ -110,7 +110,7 @@ def test_postprocess_undoes_letterbox(detector):
 def test_detect_end_to_end(tmp_path):
     d = _ready_detector(tmp_path)
     dets = d.detect(Image.new("RGB", (640, 640), "black"))
-    assert [x["label"] for x in dets] == ["barracks", "farm"]
+    assert [x["label"] for x in dets] == ["crate", "door"]
     assert dets[0]["center"] == [100, 100]
 
 
@@ -134,7 +134,7 @@ def test_detect_inert_without_model():
 
 
 def test_class_names_override_without_model(detector):
-    assert detector.class_names() == {0: "barracks", 1: "farm"}
+    assert detector.class_names() == {0: "crate", 1: "door"}
 
 
 # --- execution providers (config yolo.providers) -----------------------------
@@ -269,20 +269,20 @@ def _det(label, center, score=0.8, cid=0):
 
 
 def test_recognizer_yolo_hit():
-    yolo = _StubYolo([_det("barracks", (120, 340), cid=0)])
+    yolo = _StubYolo([_det("crate", (120, 340), cid=0)])
     hub = RecognizerHub(None, None, _StubCapturer(Image.new("RGB", (200, 400))),
                         mcp_server._logger, yolo_detector=yolo)
-    hit = hub.recognize("dev", {"type": "yolo", "label": "barracks", "conf": 0.3})
+    hit = hub.recognize("dev", {"type": "yolo", "label": "crate", "conf": 0.3})
     assert hit["channel"] == "yolo"
     assert hit["center"] == (120, 340)
-    assert hit["text"] == "barracks"
-    assert yolo.last_call == {"conf": 0.3, "classes": ["barracks"], "roi": None}
+    assert hit["text"] == "crate"
+    assert yolo.last_call == {"conf": 0.3, "classes": ["crate"], "roi": None}
 
 
 def test_recognizer_yolo_miss_returns_none():
     hub = RecognizerHub(None, None, _StubCapturer(Image.new("RGB", (200, 400))),
                         mcp_server._logger, yolo_detector=_StubYolo([]))
-    assert hub.recognize("dev", {"type": "yolo", "label": "barracks"}) is None
+    assert hub.recognize("dev", {"type": "yolo", "label": "crate"}) is None
 
 
 def test_recognizer_yolo_disabled_when_no_detector():
@@ -292,7 +292,7 @@ def test_recognizer_yolo_disabled_when_no_detector():
 
 
 def test_recognizer_yolo_uses_passed_frame():
-    yolo = _StubYolo([_det("farm", (50, 60), cid=1)])
+    yolo = _StubYolo([_det("door", (50, 60), cid=1)])
 
     class _Boom:
         def capture_image(self, device_id):
@@ -313,7 +313,7 @@ def _task(recognition):
 
 def test_validate_yolo_recognition_ok_without_label():
     validate_task(_task({"type": "yolo"}))
-    validate_task(_task({"type": "yolo", "label": "barracks", "conf": 0.3}))
+    validate_task(_task({"type": "yolo", "label": "crate", "conf": 0.3}))
 
 
 def test_validate_yolo_recognition_rejects_empty_label():
@@ -365,11 +365,11 @@ def test_list_yolo_classes_no_model(monkeypatch, tmp_path):
 
 
 def test_detect_objects_tool_with_model(monkeypatch):
-    yolo = _StubYolo([_det("barracks", (72, 82))])
+    yolo = _StubYolo([_det("crate", (72, 82))])
     monkeypatch.setattr(mcp_server, "_yolo", yolo)
     monkeypatch.setattr(mcp_server._capturer, "capture_image",
                         lambda dev: Image.new("RGB", (200, 200)))
-    result = mcp_server.detect_objects("dev", classes=["barracks"])
+    result = mcp_server.detect_objects("dev", classes=["crate"])
     assert result["found"] is True
     assert result["count"] == 1
     assert result["detections"][0]["center"] == [72, 82]
@@ -378,12 +378,12 @@ def test_detect_objects_tool_with_model(monkeypatch):
 def test_list_yolo_classes_tool_with_model(monkeypatch):
     class _Named(_StubYolo):
         def class_names(self):
-            return {0: "barracks", 1: "farm"}
+            return {0: "crate", 1: "door"}
 
     monkeypatch.setattr(mcp_server, "_yolo", _Named([]))
     result = mcp_server.list_yolo_classes()
     assert result["available"] is True
-    assert result["classes"] == {0: "barracks", 1: "farm"}
+    assert result["classes"] == {0: "crate", 1: "door"}
 
 
 # --- named models (YoloRegistry) ---------------------------------------------
@@ -539,7 +539,7 @@ def test_list_yolo_classes_tool_includes_manifest_fields(monkeypatch, tmp_path):
 
     class _Named(_StubYolo):
         def class_names(self):
-            return {0: "barracks"}
+            return {0: "crate"}
 
     monkeypatch.setattr(mcp_server, "_yolo", _Named([]))
     monkeypatch.setattr(mcp_server, "_yolo_registry", reg)
@@ -556,7 +556,7 @@ def test_list_yolo_classes_tool_omits_manifest_fields_when_absent(monkeypatch, t
 
     class _Named(_StubYolo):
         def class_names(self):
-            return {0: "barracks"}
+            return {0: "crate"}
 
     monkeypatch.setattr(mcp_server, "_yolo", _Named([]))
     monkeypatch.setattr(mcp_server, "_yolo_registry", reg)
@@ -569,7 +569,7 @@ def test_list_yolo_classes_tool_omits_manifest_fields_when_absent(monkeypatch, t
 
 
 def test_recognizer_yolo_routes_to_named_model():
-    default_model = _StubYolo([_det("barracks", (10, 10))])
+    default_model = _StubYolo([_det("crate", (10, 10))])
     objects = _StubYolo([_det("crate", (400, 900), cid=1)])
 
     class _Reg:
@@ -594,7 +594,7 @@ def test_recognizer_yolo_unknown_model_is_a_miss_not_a_crash():
 
     hub = RecognizerHub(None, None, _StubCapturer(Image.new("RGB", (10, 10))),
                         mcp_server._logger,
-                        yolo_detector=_StubYolo([_det("barracks", (1, 1))]),
+                        yolo_detector=_StubYolo([_det("crate", (1, 1))]),
                         yolo_registry=_Reg())
     assert hub.recognize("dev", {"type": "yolo", "model": "ghost"}) is None
 
@@ -614,7 +614,7 @@ def test_watchdog_spec_forwards_model_to_the_hub():
 
 
 def test_detect_objects_tool_routes_by_model_name(monkeypatch):
-    default_model = _StubYolo([_det("barracks", (1, 1))])
+    default_model = _StubYolo([_det("crate", (1, 1))])
     objects = _StubYolo([_det("crate", (300, 800))])
 
     class _Reg:
