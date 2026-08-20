@@ -7,16 +7,23 @@
 `<python>` = AutoPlayQA 所用环境的 Python 解释器；命令在**仓库根**执行。
 
 ```powershell
-# 后端回归（无需设备）：REST+MCP 双通道 round-trip、路径穿越、乐观并发、
+# 全量：仓库根一条命令同时跑框架与编辑器两套后端回归
+# （根 pytest.ini 的 testpaths = tests pipeline_editor/tests）
+<python> -m pytest
+
+# 只跑编辑器后端回归（无需设备）：REST+MCP 双通道 round-trip、路径穿越、乐观并发、
 # custom action 参数 schema 提取
 <python> -m pytest pipeline_editor\tests -q
 
-# 框架全量回归（编辑器改动不应影响它）
+# 只跑框架全量回归（编辑器改动不应影响它）
 <python> -m pytest tests -q
 
 # 前端
 cd pipeline_editor\frontend; npm run typecheck; npm test
 ```
+
+两套用例都不依赖真机（subprocess 一律 mock），所以可以合跑；编辑器用例自己把
+`pipeline_editor/` 注入 `sys.path`，从仓库根跑无需额外配置。
 
 ## 编辑器依赖框架的这些能力
 

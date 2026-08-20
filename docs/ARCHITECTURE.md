@@ -147,7 +147,9 @@ autoplayqa/
 ├── bootstrap.py           # 双入口共用装配层：load_app + build_runtime
 ├── .mcp.json.example      # Claude Code 自动发现配置模板
 ├── config.yaml.example    # 配置模板（缺省走默认值）
-├── requirements.txt       # 依赖
+├── requirements.txt       # 依赖（框架 + PipelineEditor 后端）
+├── pytest.ini             # 测试范围：一条 pytest 跑 tests/ + pipeline_editor/tests/
+├── editor.ps1             # PipelineEditor 启动薄包装（转发 pipeline_editor/scripts/dev.ps1）
 │
 ├── core/                  # 基础设施：配置/设备管理/日志/指令解析/adb 超时/通知推送
 ├── agent/                 # 一设备一 Agent，AgentPool 管理多设备选择与分发
@@ -165,6 +167,7 @@ autoplayqa/
 │
 ├── vendor/                # 第三方二进制（scrcpy-server，版本须与代码常量一致）
 ├── tests/                 # 单元测试（subprocess 全部 mock，不依赖真机）
+├── pipeline_editor/       # 可视化任务编排器（FastAPI + React）：画布编排/真值校验/内嵌编辑面 MCP（自带 tests/）
 ├── outputs/                # 运行时产物：截图/日志/debug/findings（自包含证据夹）/recordings，不入库
 │
 ├── training/               # YOLO 训练流水线（离线工具线，运行时代码不得 import）

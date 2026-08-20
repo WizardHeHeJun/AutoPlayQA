@@ -11,3 +11,11 @@ mcp>=1.0.0
 # 探测不到就打一条日志并降级为"不推送"，其余功能不受影响。
 requests>=2.31.0
 pytest>=8.0.0
+
+# --- PipelineEditor 后端（pipeline_editor/，可视化任务编排器）---
+# 编辑器与框架共用同一个 Python 环境（backend 直接 import task/ perception/），
+# 所以它的依赖并入这里，一条 pip install 装齐。只跑 CLI / MCP 时用不到这三个，
+# 但仓库根一条 `pytest` 会连 pipeline_editor/tests 一起跑，那批用例需要 fastapi。
+fastapi
+uvicorn[standard]
+websockets

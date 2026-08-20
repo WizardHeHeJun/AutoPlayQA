@@ -1,6 +1,7 @@
 # PipelineEditor 开发环境：并行拉起后端(FastAPI:8930) + 前端(Vite:5173)
 #
 # 用法: powershell -File pipeline_editor\scripts\dev.ps1 [-Python <python.exe 路径>]
+#       仓库根的 editor.ps1 是它的薄包装，参数原样转发，等价。
 #
 # -Python 传 AutoPlayQA 所用环境的解释器（框架 README 的「环境」一节写了它在哪）。
 # 不传就用 PATH 上的 python —— 只有在那个 python 正好是框架环境时才对。

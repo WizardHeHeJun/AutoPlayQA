@@ -6,6 +6,7 @@ AutoPlayQA 的定位是"确定性的眼睛和手脚"，判断与编排交给外�
 
 - [接入 Claude Code](#接入-claude-code)
 - [接入 Codex](#接入-codex)
+- [两个入口：autoplayqa 与 pipeline-editor](#两个入口autoplayqa-与-pipeline-editor)
 - [工具全集](#工具全集)
 - [agent 交接：识别到人类判断步骤怎么办](#agent-交接识别到人类判断步骤怎么办)
 - [后台任务：长流程怎么跑](#后台任务长流程怎么跑)
@@ -30,12 +31,21 @@ copy .mcp.json.example .mcp.json
       "env": {
         "PATH": "C:\\path\\to\\Android\\Sdk\\platform-tools;${PATH}"
       }
+    },
+    "pipeline-editor": {
+      "type": "http",
+      "url": "http://127.0.0.1:8930/mcp"
     }
   }
 }
 ```
 
 之后在本项目目录启动 Claude Code，会自动发现名为 `autoplayqa` 的 MCP 服务器，无需额外命令。
+
+第二条 `pipeline-editor` 是可视化编辑器 PipelineEditor 后端内嵌的 http server
+（`pipeline_editor/backend/mcp_embed.py`，只做任务编辑面）。**它只在编辑器启动后可用**
+（`powershell -File editor.ps1`）；没启动时这条连不上，智能体自动只用 stdio 的
+`autoplayqa`，功能不受影响——JSON 不能写注释，所以说明放在这里。
 
 ## 接入 Codex
 
@@ -46,6 +56,28 @@ Codex CLI 在 `~/.codex/config.toml` 里添加一段（路径同样按本机实�
 command = "C:\\path\\to\\python.exe"
 args = ["C:\\path\\to\\autoplayqa\\mcp_server.py"]
 ```
+
+## 两个入口：autoplayqa 与 pipeline-editor
+
+装了可视化编辑器后，智能体面前会有两个 MCP server。**分工是固定的**：
+
+| 对比项 | `autoplayqa`（stdio） | `pipeline-editor`（http） |
+|------|------|------|
+| 谁提供 | `mcp_server.py` | `pipeline_editor/backend/mcp_embed.py`（编辑器后端内嵌，`http://127.0.0.1:8930/mcp`） |
+| 何时可用 | 始终（Claude Code 自己拉起进程） | 只有编辑器在跑时（`powershell -File editor.ps1`） |
+| 工具面 | 全集：设备 / 感知 / 动作 / 录制 / 监控 / 任务运行 + 编辑 | 只有编辑面：`get_task` / `validate_task` / `save_task` / `renumber_task` / `lint_saved_task` / `list_includes` / `list_custom_actions` / 套件读写 |
+
+- **编辑类工具优先用 `pipeline-editor`**：它与用户的画布同进程，你每次 `save_task` /
+  `renumber_task` 落盘后 ~2 秒内画布自动重载，用户能实时看到你改了什么并接手微调
+  （所以保存后先停手等用户表态，别对同一任务连续叠改）。它还支持 `base_mtime_ns`
+  乐观并发：用户同时在画布上保存时你会收到 `{ok: false, conflict: true}` 而不是静默覆盖。
+- **设备 / 感知 / 运行类工具只在 `autoplayqa` 上**：连设备、截图、OCR、跑任务、跑套件、
+  findings 导出都走它，`pipeline-editor` 不提供也不打算提供。
+- 编辑器**没起**时，`pipeline-editor` 连不上，直接退回 `autoplayqa` 的同名编辑工具即可，
+  校验与落盘语义完全一致，只是用户看不到实时画面。
+- **互斥**：编辑器的运行面板与 `autoplayqa` 的 `start_task` / `run_suite` 是两个进程两套
+  引擎实例。编辑器正在跑任务时，别用 MCP 对同一台设备再起一个 run（输入互踩、findings
+  目录交错、replay_cache 并发写）；纯编辑（校验 / 保存）随时安全。
 
 ## 工具全集
 

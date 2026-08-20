@@ -59,14 +59,17 @@ includes / custom-actions / suites）。AI 经它编辑任务时与编辑器同�
 - 画布无未保存修改 → **自动重载**并提示"任务已被外部修改（AI/MCP）"；
 - 有未保存修改 → 冲突横幅，人选择"重载丢弃本地"或"保持本地"。
 
-Claude Code 接入（在仓库的 `.mcp.json` 里加一项）：
+Claude Code 接入：**仓库的 `.mcp.json.example` 已经带了这条示例条目**，照常
+`copy .mcp.json.example .mcp.json` 即可，不用手写：
 
 ```json
 "pipeline-editor": { "type": "http", "url": "http://127.0.0.1:8930/mcp" }
 ```
 
-设备/感知/运行类工具仍在 AutoPlayQA 的 stdio MCP（`game-automation`）上；
-编辑器没起时 agent 退回它的同名编辑工具即可（功能一致，无实时画面）。
+这个地址就是后端 `main.py` 的默认端口（8930）加 `app.py` 里 `app.mount("/mcp", ...)`
+的挂载路径；改了 `--port` 记得同步改 URL。条目在编辑器**没起**时连不上是正常的：
+agent 会自动退回 AutoPlayQA stdio MCP（`.mcp.json` 里名为 `autoplayqa`）上的同名
+编辑工具（功能一致，只是用户看不到实时画面）。设备/感知/运行类工具只在 `autoplayqa` 上。
 
 ## 与 MCP 的互斥
 

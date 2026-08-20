@@ -43,12 +43,14 @@ backend/   FastAPI（直接 import AutoPlayQA 模块；校验真值 = task_loade
 
 ```powershell
 # 依赖（一次性）：装在框架用的同一个环境里，不另建 venv
-<python> -m pip install -r pipeline_editor\requirements.txt
+# （编辑器后端依赖已并入根 requirements.txt；pipeline_editor\requirements.txt 转发到它）
+<python> -m pip install -r requirements.txt
 cd pipeline_editor\frontend; npm install
 
 # 开发
-powershell -File pipeline_editor\scripts\dev.ps1 -Python <python>
+powershell -File editor.ps1 -Python <python>
 # 或分开：
+#   powershell -File pipeline_editor\scripts\dev.ps1 -Python <python>   # editor.ps1 转发的就是它
 #   <python> pipeline_editor\backend\main.py          # :8930
 #   cd pipeline_editor\frontend; npm run dev          # :5173（proxy → 8930）
 ```
@@ -59,7 +61,10 @@ powershell -File pipeline_editor\scripts\dev.ps1 -Python <python>
 ## 测试
 
 ```powershell
-# 后端回归（无需设备）：REST+MCP 双通道 round-trip、路径穿越、乐观并发、
+# 全量（仓库根一条命令跑框架 + 编辑器两套后端回归，配置见根 pytest.ini）
+<python> -m pytest
+
+# 只跑编辑器后端回归（无需设备）：REST+MCP 双通道 round-trip、路径穿越、乐观并发、
 # custom action 参数 schema 提取
 <python> -m pytest pipeline_editor\tests -q
 # 前端

@@ -6,6 +6,10 @@
       "env": {
         "PATH": "C:\\path\\to\\Android\\Sdk\\platform-tools;${PATH}"
       }
+    },
+    "pipeline-editor": {
+      "type": "http",
+      "url": "http://127.0.0.1:8930/mcp"
     }
   }
 }

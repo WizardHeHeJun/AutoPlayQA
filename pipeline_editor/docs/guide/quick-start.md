@@ -8,13 +8,14 @@
 以下命令都在**仓库根**执行。
 
 ```powershell
-# 依赖（一次性）：装在 AutoPlayQA 所用的同一个环境里
-<python> -m pip install -r pipeline_editor\requirements.txt
+# 依赖（一次性）：装在 AutoPlayQA 所用的同一个环境里（编辑器依赖已并入根 requirements.txt）
+<python> -m pip install -r requirements.txt
 cd pipeline_editor\frontend; npm install
 
 # 开发
-powershell -File pipeline_editor\scripts\dev.ps1 -Python <python>
+powershell -File editor.ps1 -Python <python>
 # 或分开：
+#   powershell -File pipeline_editor\scripts\dev.ps1 -Python <python>   # editor.ps1 转发的就是它
 #   <python> pipeline_editor\backend\main.py                 # :8930
 #   cd pipeline_editor\frontend; npm run dev                 # :5173（proxy → 8930）
 ```

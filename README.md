@@ -88,6 +88,8 @@ $env:PATH = "$env:LOCALAPPDATA\Android\Sdk\platform-tools;$env:PATH"
 
 复制 `.mcp.json.example` 为 `.mcp.json`，把 `command` 改成你环境的 Python 解释器绝对路径；之后在本项目目录启动 Claude Code 即自动发现 `autoplayqa` 服务器。
 
+模板里还带了第二条 `pipeline-editor`（http，`http://127.0.0.1:8930/mcp`）：可视化编辑器 PipelineEditor 后端内嵌的编辑面 MCP，**编辑器启动后才可用**，没启动时智能体自动只用 stdio 的 `autoplayqa`（编辑工具同名同语义，只是用户看不到实时画布）。分工详见 [`docs/MCP_INTEGRATION.md`](docs/MCP_INTEGRATION.md#两个入口autoplayqa-与-pipeline-editor)。
+
 Codex CLI 在 `~/.codex/config.toml` 添加（路径按本机调整）：
 
 ```toml
@@ -268,7 +270,13 @@ flowchart TD
 - ▶️ **真机运行高亮**：后台线程跑引擎，WebSocket 推每一步，画布实时高亮当前节点 + visited 轨迹；停止走引擎的协作式干净收尾，report 与证据链完整
 - 🤝 **MCP 协同**：后端在 `/mcp` 内嵌编辑面 MCP server，智能体一落盘，用户画布 ~2 秒内自动重载（有未保存修改则弹冲突横幅）——人画图、AI 改 JSON，写的是同一份文件、过同一套校验
 
-启动与完整使用指南见 [`pipeline_editor/README.md`](pipeline_editor/README.md)（文档站在 `pipeline_editor/docs/`）。
+在仓库根一条命令拉起（后端 :8930 + 前端 :5173，浏览器打开它打印的地址）：
+
+```powershell
+powershell -File editor.ps1 -Python <python>   # 转发到 pipeline_editor\scripts\dev.ps1，参数语义一致
+```
+
+前端依赖首次要装一次（`cd pipeline_editor\frontend; npm install`）；后端依赖已并入根 `requirements.txt`。完整使用指南见 [`pipeline_editor/README.md`](pipeline_editor/README.md)（文档站在 `pipeline_editor/docs/`）。
 
 ## 目录结构
 
@@ -306,9 +314,11 @@ autoplayqa/
 ├── mcp_server.py                 # MCP 入口（FastMCP / stdio）：感知/动作/任务工具全集，装配复用 bootstrap.py
 ├── main.py                       # CLI 入口：config → 设备 → 感知 → 解析 → 任务引擎 → Agent 池 → CLI，装配复用 bootstrap.py
 ├── bootstrap.py                  # 双入口共用装配层：load_app（读配置建日志）+ build_runtime（拼感知/任务对象图）
-├── .mcp.json.example             # Claude Code 自动发现配置模板（复制为 .mcp.json 改 Python 路径）
+├── .mcp.json.example             # Claude Code 自动发现配置模板（复制为 .mcp.json 改 Python 路径；含 autoplayqa + pipeline-editor 两个 server）
 ├── config.yaml.example           # 配置模板（缺省走默认值，无需任何凭证即可启动）
-├── requirements.txt              # 依赖
+├── requirements.txt              # 依赖（框架 + PipelineEditor 后端，一次装齐）
+├── pytest.ini                    # 测试范围：一条 pytest 同时跑 tests/ 与 pipeline_editor/tests/
+├── editor.ps1                    # PipelineEditor 启动薄包装（转发 pipeline_editor\scripts\dev.ps1）
 │
 ├── core/                         # 基础设施
 │   ├── config.py                 #   配置加载（缺 config.yaml 返回空走默认）
@@ -396,8 +406,12 @@ autoplayqa/
 ## 测试
 
 ```powershell
-python -m pytest tests/ -v
+python -m pytest              # 全量：框架 tests/ + PipelineEditor 后端 pipeline_editor/tests/
+python -m pytest tests -q     # 只跑框架
+python -m pytest pipeline_editor/tests -q   # 只跑编辑器后端
 ```
+
+两套都不依赖真机（subprocess 一律 mock），合跑范围由根 `pytest.ini` 的 `testpaths` 定义。
 
 ## 关于
 

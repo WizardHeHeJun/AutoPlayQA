@@ -1,6 +1,6 @@
-# PipelineEditor 后端依赖。装在 AutoPlayQA 所用的同一个 Python 环境里
-# （编辑器直接 import 框架模块，不另建环境）：
-#   <python> -m pip install -r pipeline_editor/requirements.txt
-fastapi
-uvicorn[standard]
-websockets
+# PipelineEditor 的后端依赖已并入仓库根 requirements.txt（"PipelineEditor 后端"一节）。
+# 编辑器与框架共用同一个 Python 环境，两份清单没有分开的意义；这里转发而不是复制一份
+# 版本号，避免两处漂移。装依赖用任意一条都行：
+#   <python> -m pip install -r requirements.txt                  # 仓库根
+#   <python> -m pip install -r pipeline_editor/requirements.txt  # 等价，转发到上面那份
+-r ../requirements.txt

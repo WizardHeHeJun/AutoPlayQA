@@ -60,6 +60,9 @@ pip install -r requirements.txt
 | `mcp` | MCP 服务器（`mcp_server.py`，FastMCP/stdio） | 只用本地 CLI 可不装，但默认随依赖一起装 |
 | `requests` | findings 结果推送（飞书机器人 / 通用 webhook） | 可选：只在配置了 `findings.notifiers` 时用到；未安装时 notifier 懒加载失败会自动降级为"不推送"，不影响其余功能 |
 | `pytest` | 跑单元测试 | 开发/测试用 |
+| `fastapi` / `uvicorn[standard]` / `websockets` | PipelineEditor（`pipeline_editor/`）可视化编排器的后端 | 只跑 CLI / MCP 时用不到；但仓库根一条 `pytest` 会连编辑器后端回归一起跑，那批用例需要 `fastapi` |
+
+编辑器与框架共用同一个 Python 环境（后端直接 import `task/`、`perception/`），所以它的依赖并入了这一份清单；`pipeline_editor/requirements.txt` 只是转发到它（`-r ../requirements.txt`），两条 `pip install` 命令等价。编辑器前端另需 `cd pipeline_editor\frontend; npm install`，启动见仓库根 `editor.ps1`。
 
 > YOLO 目标检测通道本身不需要额外安装任何深度学习框架（不依赖 PyTorch），复用的就是 `onnxruntime` 做推理；`task/models/` 下没有放 `.onnx` 模型文件时，该通道自动报告不可用，不会报错中断。
 
@@ -106,7 +109,10 @@ python main.py
 python mcp_server.py
 
 # 跑单元测试（不依赖真机，subprocess 全部 mock）
-python -m pytest tests/ -v
+python -m pytest tests -v
+
+# 全量：框架 + PipelineEditor 后端两套一起跑（范围见根 pytest.ini 的 testpaths）
+python -m pytest
 ```
 
 CLI 启动后输入 `device list` 应能看到已连接的设备；输入 `help` 查看全部命令（完整命令手册见 `docs/CLI_COMMANDS.md`）。
