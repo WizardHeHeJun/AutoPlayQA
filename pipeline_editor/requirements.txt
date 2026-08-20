@@ -1,0 +1,6 @@
+# PipelineEditor 后端依赖。装在 AutoPlayQA 所用的同一个 Python 环境里
+# （编辑器直接 import 框架模块，不另建环境）：
+#   <python> -m pip install -r pipeline_editor/requirements.txt
+fastapi
+uvicorn[standard]
+websockets

@@ -1,0 +1,114 @@
+{
+  "click_topmost_text": {
+    "expected": {
+      "en": "text to look for (required)",
+      "zh": "要查找的文本（必填）"
+    },
+    "roi": {
+      "en": "[x1, y1, x2, y2] search region (optional)",
+      "zh": "[x1, y1, x2, y2] 搜索区域（可选）"
+    },
+    "threshold": {
+      "en": "similarity gate, same scale as an ocr recognition (default 0.65)",
+      "zh": "相似度门限，与 ocr 识别用的是同一套量纲（默认 0.65）"
+    },
+    "order": {
+      "en": "\"top\" (default) or \"bottom\" — which end of the column to take",
+      "zh": "取这一列文本的哪一端：\"top\"（默认，最靠上）或 \"bottom\"（最靠下）"
+    }
+  },
+  "ensure_checkbox": {
+    "probe": {
+      "en": "{\"x\", \"y\"} pixel sampled for the checkmark color (required)",
+      "zh": "{\"x\", \"y\"}：用于采样勾选标记颜色的像素点（必填）"
+    },
+    "tap": {
+      "en": "point spec to toggle the box when unchecked (required)",
+      "zh": "未勾选时用来点击切换的坐标点 spec（必填）"
+    },
+    "checked_rgb": {
+      "en": "[r, g, b] expected when checked (default [115, 206, 66])",
+      "zh": "已勾选时期望的 [r, g, b] 颜色（默认 [115, 206, 66]）"
+    },
+    "tolerance": {
+      "en": "per-channel max distance to count as checked (default 60)",
+      "zh": "判定为已勾选的单通道最大色差（默认 60）"
+    },
+    "settle_ms": {
+      "en": "wait after a toggle (default 1200)",
+      "zh": "点击切换后的等待时间，ms（默认 1200）"
+    }
+  },
+  "gm_command": {
+    "command": {
+      "en": "GM command string, e.g. \"AddItem;1001;10\" (required; no single quotes)",
+      "zh": "GM 命令字符串，如 \"AddItem;1001;10\"（必填；不能含单引号）"
+    },
+    "exec_button": {
+      "en": "recognition spec for the execute button (required)",
+      "zh": "执行按钮的 recognition spec（必填）"
+    },
+    "settle_ms": {
+      "en": "wait between steps (default 1200)",
+      "zh": "各步骤之间的等待时间，ms（默认 1200）"
+    },
+    "latin_ime": {
+      "en": "override IME id for ascii injection (default: auto-detect)",
+      "zh": "覆盖 ascii 注入所用的输入法（IME）id（默认：自动探测）"
+    }
+  },
+  "launch_app": {
+    "package": {
+      "en": "Android package name (required)",
+      "zh": "Android 包名（必填）"
+    },
+    "force_stop": {
+      "en": "kill the app first for a cold start (default False)",
+      "zh": "先杀掉 App 以冷启动（默认 False）"
+    },
+    "settle_ms": {
+      "en": "wait after launching before the node completes (default 3000)",
+      "zh": "启动后到本节点完成之间的等待，ms（默认 3000）"
+    }
+  },
+  "set_text_field": {
+    "field": {
+      "en": "point spec to tap/focus the field (required)",
+      "zh": "点击/聚焦输入框的坐标点 spec（必填）"
+    },
+    "text": {
+      "en": "string to enter (required, no single quotes)",
+      "zh": "要输入的字符串（必填，不能含单引号）"
+    },
+    "clear": {
+      "en": "DEL presses to clear existing content first (default 40)",
+      "zh": "先按多少次 DEL 清空原有内容（默认 40）"
+    },
+    "settle_ms": {
+      "en": "wait between steps (default 1200)",
+      "zh": "各步骤之间的等待时间，ms（默认 1200）"
+    },
+    "latin_ime": {
+      "en": "override IME id for the injection (default: auto-detect)",
+      "zh": "覆盖注入所用的输入法（IME）id（默认：自动探测）"
+    }
+  },
+  "swipe_until": {
+    "recognition": {
+      "en": "node-style recognition spec to look for (required)",
+      "zh": "要查找的节点式 recognition spec（必填）"
+    },
+    "swipe": {
+      "en": "{\"x1\", \"y1\", \"x2\", \"y2\", \"duration_ms\"?} one swipe gesture (required)",
+      "zh": "{\"x1\", \"y1\", \"x2\", \"y2\", \"duration_ms\"?} 一次滑动手势（必填）"
+    },
+    "max_swipes": {
+      "en": "attempts before giving up (default 5)",
+      "zh": "放弃前的最大尝试次数（默认 5）"
+    },
+    "settle_ms": {
+      "en": "wait after each swipe before recognizing (default 800)",
+      "zh": "每次滑动后、执行识别前的等待，ms（默认 800）"
+    }
+  }
+}

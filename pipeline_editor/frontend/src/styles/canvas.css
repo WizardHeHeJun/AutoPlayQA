@@ -1,0 +1,222 @@
+.pe-node {
+  width: 260px;
+  border: 1.5px solid #d0d5dd;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 12px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.08);
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.pe-node.selected {
+  border-color: #1677ff;
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.2);
+}
+
+.pe-node.readonly {
+  background: #f5f5f5;
+  border-style: dashed;
+  color: #667085;
+}
+
+.pe-node.has-error {
+  border-color: #ff4d4f;
+  box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.25);
+}
+
+.pe-node.has-warning {
+  border-color: #faad14;
+}
+
+.pe-node.run-current {
+  border-color: #52c41a;
+  animation: pe-breathe 1.2s ease-in-out infinite;
+}
+
+.pe-node.run-visited {
+  border-color: #95de64;
+  background: #f6ffed;
+}
+
+@keyframes pe-breathe {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(82, 196, 26, 0.25); }
+  50% { box-shadow: 0 0 0 7px rgba(82, 196, 26, 0.45); }
+}
+
+.pe-node-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-bottom: 1px solid #f0f0f0;
+  font-weight: 600;
+  overflow: hidden;
+}
+
+.pe-node-title {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pe-step-badge {
+  flex: none;
+  background: #1677ff;
+  color: #fff;
+  border-radius: 4px;
+  padding: 0 5px;
+  font-size: 11px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+.pe-step-badge.branch { background: #fa8c16; }
+.pe-step-badge.unreachable { background: #bfbfbf; }
+
+.pe-node-body {
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  color: #475467;
+}
+
+.pe-node-line {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── 详情模式：分组参数行 ─────────────────────────────── */
+.pe-node-section {
+  border-left: 2px solid #d0d5dd;
+  padding-left: 6px;
+}
+
+.pe-node-section + .pe-node-section {
+  margin-top: 5px;
+}
+
+.pe-node-section.rec { border-left-color: #91caff; }
+.pe-node-section.act { border-left-color: #ffd591; }
+.pe-node-section.misc { border-left-color: #d9d9d9; }
+
+.pe-section-title {
+  font-size: 10px;
+  line-height: 15px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pe-node-section.rec .pe-section-title { color: #0958d9; }
+.pe-node-section.act .pe-section-title { color: #d46b08; }
+.pe-node-section.misc .pe-section-title { color: #667085; }
+
+/**
+ * 参数行用 grid：label 列按本组最宽键名自适应（`auto` 轨道 + label 自身 max-width 封顶），
+ * 同一分组内的 value 列仍然对齐。**每格都是单行 16px**——`graph/autoLayout.ts` 的
+ * DETAIL_ROW_H 依赖这一点，别给 label/value 开换行。
+ */
+.pe-detail-rows {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 5px;
+  align-items: baseline;
+}
+
+.pe-detail-label {
+  /* 120px @10px 字号 ≈ 20+ 字符，够装下 max_empty_scans / arrow_scan_step_px 这类长键名 */
+  max-width: 120px;
+  text-align: right;
+  color: #98a2b3;
+  font-size: 10px;
+  line-height: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pe-detail-value {
+  min-width: 0;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 11px;
+  line-height: 16px;
+  color: #344054;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pe-node-footer {
+  padding: 3px 8px;
+  border-top: 1px dashed #f0f0f0;
+  color: #667085;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pe-node-badges {
+  display: flex;
+  gap: 4px;
+  padding: 0 8px 6px;
+  flex-wrap: wrap;
+}
+
+.pe-badge {
+  font-size: 10px;
+  line-height: 16px;
+  border-radius: 3px;
+  padding: 0 4px;
+  background: #f2f4f7;
+  color: #475467;
+}
+
+.pe-badge.terminal { background: #d9f7be; color: #237804; }
+.pe-badge.entry { background: #e6f4ff; color: #0958d9; }
+.pe-badge.finding-info { background: #e6f4ff; color: #0958d9; }
+.pe-badge.finding-warning { background: #fff7e6; color: #d46b08; }
+.pe-badge.finding-error { background: #fff1f0; color: #cf1322; }
+.pe-badge.finding-critical { background: #cf1322; color: #fff; }
+.pe-badge.warn { background: #fffbe6; color: #d48806; }
+
+.pe-edge-order {
+  background: #1677ff;
+  color: #fff;
+  border-radius: 8px;
+  min-width: 16px;
+  height: 16px;
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+  padding: 0 3px;
+  pointer-events: all;
+}
+
+.react-flow__handle.pe-handle-next { background: #1677ff; }
+.react-flow__handle.pe-handle-timeout { background: #fa8c16; }
+.react-flow__handle.pe-handle-target { background: #98a2b3; }
+
+/* antd Collapse 的 header-text 默认 flex: auto 但没有 min-width: 0，
+   长文本 label（如 TaskSettingsPanel 的 watchdog/popup 摘要）会撑开甚至
+   把 Collapse 头顶乱；配合 Typography.Text ellipsis 需要这条才能真正单行省略。 */
+.ant-collapse-header-text {
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* EditorPage 右侧面板 Tabs：.ant-tabs-content 默认不撑满高度，导致 tabpane 的
+   height:100% 无参照，各面板根元素的 overflow:auto 永不触发（内容长时下半截
+   看不到）。仅在 .pe-right-tabs 作用域内修，不污染 SuitesPage/ReportsPage 等
+   其它 Tabs。 */
+.pe-right-tabs .ant-tabs-content-holder {
+  overflow: hidden;
+}
+.pe-right-tabs .ant-tabs-content {
+  height: 100%;
+}

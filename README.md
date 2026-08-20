@@ -68,6 +68,7 @@
 - ⚡ scrcpy 帧流截图后端（**默认**）：常驻 H.264 流本地解码 ~13ms/帧，screencap 兜底（任何失败自动回退、反复失败 latch off）；需精确像素或 scrcpy 不可用时设 `capture.backend: screencap`
 - 🔌 MCP 服务器：Claude Code / Codex 即插即用
 - 📝 多种任务创建方式：手写 JSON / 智能体真机探路生成 / 观察式录制（用户手动演示，智能体监控生成）/ CLI 会话录制草稿
+- 🎨 可视化编排：`pipeline_editor/` 的 Web 画布编辑器（真值校验 + lint、截图取 ROI/模板、真机运行高亮、与智能体经内嵌 MCP 实时协同），见[可视化编排：PipelineEditor](#可视化编排pipelineeditor)
 
 ## 快速开始
 
@@ -257,6 +258,18 @@ flowchart TD
 
 无论哪种方式，写任务遵循同一约定：识别锚点优先 `ui_text`（系统界面）/ `ocr`（游戏单 Surface 文字）/ `template`（图标·贴图等无文字元素）/ `feature`（纹理丰富、会小改版的锚点）/ `yolo`（训练后的目标检测，抗形变遮挡）/ `scene`（只回答"我在哪"，不产坐标），动作用 `"target": "recognized"` 不写死坐标；弹窗等异常分支节点加 `finding` 字段，任务级加 `watchdogs` 负向断言——本项目定位是 QA 测试工具，异常要上报留证而不是静默绕过。
 
+### 可视化编排：PipelineEditor
+
+任务不止能写，也能画。`pipeline_editor/`（FastAPI + React，随本仓库分发）是任务 JSON 的 Web 可视化编辑器，直接改 `task/task_definitions/<任务名>.json`，不另存副本：
+
+- 🎨 **画布编排**：拖拽连线编排状态机——实线 = `next`（边上标着识别优先级）、橙虚线 = `on_timeout`；`includes` 引进的节点灰底加锁只读，保存时自动剔除，绝不固化进主文件
+- ✅ **真值校验 + lint**：停手 0.8 秒自动把当前图发给后端干跑 `task_loader.resolve_task` 与 `lint_task`，编辑器**不复刻任何校验规则**，画布上看到的错就是引擎会报的错
+- 🎯 **截图取 ROI / 模板**：`roi` 字段旁点准星，从真机全分辨率截图上拖框写回坐标，还能当场「OCR 试读 / 模板试匹配」看命中框与分数；`template` 字段可直接从截图裁出新模板落盘
+- ▶️ **真机运行高亮**：后台线程跑引擎，WebSocket 推每一步，画布实时高亮当前节点 + visited 轨迹；停止走引擎的协作式干净收尾，report 与证据链完整
+- 🤝 **MCP 协同**：后端在 `/mcp` 内嵌编辑面 MCP server，智能体一落盘，用户画布 ~2 秒内自动重载（有未保存修改则弹冲突横幅）——人画图、AI 改 JSON，写的是同一份文件、过同一套校验
+
+启动与完整使用指南见 [`pipeline_editor/README.md`](pipeline_editor/README.md)（文档站在 `pipeline_editor/docs/`）。
+
 ## 目录结构
 
 ```mermaid
@@ -365,6 +378,8 @@ autoplayqa/
 │   ├── debug_tracer.py           #   调试落盘 outputs/debug/
 │   ├── image_annotator.py        #   图片标注
 │   └── helpers.py                #   像素差分等通用助手
+│
+├── pipeline_editor/              # 可视化任务编排器（FastAPI + React）：画布编排 · 真值校验 · 截图取 ROI/模板 · 真机运行高亮 · 内嵌编辑面 MCP（backend/ frontend/ docs/ tests/）
 │
 ├── vendor/                       # 第三方二进制（scrcpy-server-v3.1，版本须与代码常量一致）
 ├── tests/                        # 单元测试（subprocess 全 mock，免真机）

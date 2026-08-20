@@ -1,0 +1,26 @@
+# PipelineEditor 子目录的忽略规则（仓库根 .gitignore 管全局的 Python/IDE/输出）。
+# 这里只补编辑器自己的产物：前端与文档站的 node 依赖 / 构建产物。
+
+# Node 依赖：frontend/ 与 docs/ 各有一份，不写死路径
+node_modules/
+
+# 前端构建产物
+frontend/dist/
+*.tsbuildinfo
+
+# VitePress 文档站构建产物与缓存
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# 环境与密钥
+.env
+.env.*
+!.env.example
+
+# 日志与临时文件
+*.log
+*.tmp
