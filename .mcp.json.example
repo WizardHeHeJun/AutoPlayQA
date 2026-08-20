@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "autoplayqa": {
+      "command": "C:\\path\\to\\python.exe",
+      "args": ["mcp_server.py"],
+      "env": {
+        "PATH": "C:\\path\\to\\Android\\Sdk\\platform-tools;${PATH}"
+      }
+    }
+  }
+}

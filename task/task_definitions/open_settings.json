@@ -1,0 +1,19 @@
+{
+  "entry": "点击设置",
+  "nodes": {
+    "点击设置": {
+      "recognition": {"type": "ui_text", "expected": "设置"},
+      "action": {"type": "click", "target": "recognized"},
+      "next": ["进入显示设置"],
+      "timeout_ms": 10000,
+      "post_delay_ms": 800
+    },
+    "进入显示设置": {
+      "recognition": {"type": "ui_text", "expected": "显示"},
+      "action": {"type": "click", "target": "recognized"},
+      "next": [],
+      "timeout_ms": 8000,
+      "on_timeout": "点击设置"
+    }
+  }
+}

@@ -1,0 +1,243 @@
+app:
+  # Console level only. The logger itself always runs at DEBUG so the per-run
+  # run.log can keep the verbose trace (poll misses, settle waits) that the
+  # terminal does not show.
+  log_level: INFO
+  # Write run.log (DEBUG) into each task run's findings folder, next to
+  # report.json — the step-by-step trace of what the engine saw and did.
+  # Needs the findings recorder (findings.enabled); harmless no-op without it.
+  run_log: true
+
+adb:
+  # Hard ceiling (seconds) on a single blocking adb command: screencap,
+  # uiautomator dump, input tap/swipe, device probes. Without it a wedged adb
+  # server or a USB hiccup blocks the caller forever — that is how an MCP tool
+  # call ends up hanging until the client's idle timeout instead of failing.
+  # 30s is ~10x the slowest healthy round trip measured here (dump ~4.3s,
+  # `screencap -p` ~2.4s), so a hit means "stuck", not "slow". On timeout the
+  # normal fallbacks still run (dump -> OCR) or the tool returns a clear error;
+  # it never silently retries forever. Raise it only for very slow emulators.
+  # Not applied to calls that are long by design: screenrecord segments, the
+  # scrcpy video stream and the getevent gesture stream have their own waits.
+  timeout_s: 30
+  # Wireless devices to `adb connect` on startup (port defaults to 5555).
+  # First-time setup: `device tcpip <device_id>` over USB, or `device pair` on Android 11+.
+  wireless: []
+  # wireless:
+  #   - 192.168.1.100:5555
+
+capture:
+  # scrcpy (default): persistent device-side H.264 stream decoded locally
+  # (~tens of ms per frame). Uses the bundled vendor/scrcpy-server-v3.1 + pip
+  # `av`. Lossy H.264; any stream failure falls back to screencap automatically,
+  # and a device is latched off to pure screencap after repeated failures.
+  # screencap (opt-out): one adb round trip per frame, stateless, exact RGBA,
+  # ~0.5s/frame. Set backend: screencap if scrcpy is unavailable or you need
+  # pixel-exact frames (e.g. for tight pixel-diff / blank_screen thresholds).
+  backend: scrcpy
+  scrcpy:
+    max_fps: 30
+    bit_rate: 8000000
+    max_size: 0  # 0 = native resolution (keeps OCR/click coordinates exact)
+
+recording:
+  # Where record_actions_start writes an agent's own action log (one folder per
+  # session: session.json + one pre-action PNG per step). Off unless a session
+  # is started, so this only decides the location.
+  agent_sessions_dir: outputs/agent_sessions
+
+replay_cache:
+  # Cache recognized anchor positions between task runs; replays OCR the cached
+  # region first (fast path) and fall back to full screen. Never skips the
+  # recognition gate; an anchor found elsewhere raises an anchor_drift finding.
+  enabled: true
+  path: outputs/cache/replay_cache.json
+
+yolo:
+  # The default detection model — the one `detect_objects` / a `{"type":"yolo"}`
+  # recognition node use when no `model` is named. Nothing ships here: the
+  # framework is game-agnostic, so drop your own export at this path (train with
+  # ultralytics, then `yolo export format=onnx`) and the channel comes online.
+  # Missing model = the channel reports unavailable, it never guesses.
+  model: task/models/yolo.onnx
+  conf: 0.25
+  iou: 0.45
+  input_size: 640
+  # classes: [class_a, class_b]   # only to override the names baked into the
+  #                               # onnx metadata
+  # onnxruntime execution providers, best first. Unset = CPU only: the portable
+  # default that needs no extra install, so a fresh clone infers identically on
+  # every box. A machine with the hardware can opt into a GPU provider for
+  # high-frequency inference (fast real-time scenes) — install the matching wheel first
+  # (onnxruntime-directml / onnxruntime-gpu). Anything this onnxruntime build
+  # does not have is dropped with a warning, and CPUExecutionProvider always
+  # stays as the tail fallback, so a config written for another box still runs.
+  # providers: [DmlExecutionProvider, CPUExecutionProvider]
+
+  # Extra models, one per detection domain. Separate files (not one merged
+  # checkpoint) on purpose: the model a shipped task gates on must not be
+  # retrained every time another domain gains data — and a frame that leaves
+  # the other domain's objects unlabelled is *negative* supervision for them.
+  # Ask for one by name: detect_objects(model="icons") or a node recognition
+  # {"type": "yolo", "model": "icons", "label": "close_button"}.
+  #
+  # You do NOT need to list them here: every other *.onnx sitting next to the
+  # default model registers automatically under its filename stem
+  # (task/models/icons.onnx -> "icons"), the same drop-in deal as
+  # task/templates/. This section only *tunes* a model, or points one at a path
+  # outside that directory. Unset keys inherit the default model's
+  # conf/iou/input_size/providers.
+  # models:
+  #   icons:                # a second detection domain, e.g. HUD icons
+  #     conf: 0.30
+
+scene:
+  # Scene classification (MCP `classify_scene`, or a {"type": "scene"}
+  # recognition node): one screenshot, cheap rule probes, and a dotted label
+  # with evidence — "which functional screen is this", above the
+  # anchor-hunting channels.
+  #
+  # The built-in taxonomy ships exactly ONE label: `blank` (near-black /
+  # screen-off / empty frame), plus the non-scene signal `other_app` and the
+  # never-guessed `unknown`. Every other label ("popup", "popup.error",
+  # "menu.settings", ...) is contributed by the integrating project via
+  # perception.scene_classifier.register_scene_probe(label, fn, ...). This
+  # section only tunes the shared knobs those probes read.
+
+  # Grayscale stddev below which a frame counts as blank. The same 8.0 gate as
+  # the `blank_screen` recognizer and the monitor sentinel, deliberately: one
+  # number for "the screen has nothing on it" across the whole project. Under
+  # the lossy H.264 capture backend a genuinely blank frame still carries
+  # compression noise, so do not tighten this without re-measuring.
+  blank_stddev: 8.0
+  # Readings weaker than this are reported as `unknown` instead of guessed, and
+  # the `scene` recognition channel refuses to gate a node on them.
+  min_confidence: 0.5
+  # Foreground-package allowlist for the app under test. When it is set AND the
+  # caller passes a device_id, the cheapest signal there is runs first: a
+  # foreground package outside this list comes back as `other_app` — the only
+  # way to tell "the app crashed out to the launcher" from "a screen no probe
+  # knows". Empty (the default) skips the check entirely, costing nothing.
+  game_packages: []
+  # game_packages:
+  #   - com.example.game
+
+engine:
+  # Unknown-popup escape hatch: when recognition stalls and the task's `popups`
+  # whitelist can't clear it, something unexpected is covering the screen. The
+  # engine records an `unknown_popup_backoff` finding pinned to that frame
+  # (evidence first — BACK may wipe it), presses BACK exactly once, and retries
+  # recognition only if the screen visibly changed. It never jumps anywhere
+  # (that is bug-skip's job). Priority: a node's own `on_timeout` branch wins —
+  # where the task author designed a recovery, BACK is skipped entirely, so the
+  # fallback only covers dead ends that would otherwise fail the run.
+  # Per-task opt-out: "back_fallback": false in the task JSON.
+  back_fallback: true
+  # Fraction of pixels that must differ after the BACK press for it to count as
+  # "something happened" and earn the extra recognition round.
+  back_fallback_change_threshold: 0.01
+  # Node health (result["node_stats"] / report.json): a node needing this many
+  # timeout recoveries — or whose anchor moved this many times — in one run gets
+  # one "anchor_rot_suspect" warning finding (stale task anchor, not a game bug).
+  # 0 disables the check; the statistics are still collected.
+  rot_suspect_timeouts: 2
+  # Anchor moves shorter than this (px) are layout jitter: counted in node_stats
+  # but not reported as an anchor_drift finding.
+  drift_tolerance_px: 30
+  # Per-run step budget (loop guard): a run that recognizes more than this many
+  # nodes fails with "Max steps exceeded; possible task loop". Long translated
+  # flows can inflate node count 3.5-4x past the default — raise this globally,
+  # or per-task via task JSON "max_steps" (task JSON wins over this value).
+  max_steps: 50
+
+lint:
+  # Task-authoring lint (task/task_lint.py): save_task returns `lint_warnings`
+  # (W001-W005) for legal-but-fragile patterns. With strict: true any warning
+  # rejects the save instead; keep false until the rules have settled.
+  strict: false
+
+debug:
+  enabled: true
+  capture_after: true
+  annotate: true
+  save_top_candidates: 3
+  output_dir: outputs/debug
+
+findings:
+  # QA findings are always collected; these only tune the evidence attached.
+  # output_dir: outputs/findings
+  # retention_days: 14        # delete day-folders older than this (<=0 = keep all)
+  # log_tail_lines: 300       # lines kept in <finding>_logcat.log
+  # Run-summary push (unattended runs: run_suite / cron). ONE message per run,
+  # never one per finding, sent after report.json + the auto-export so it can
+  # point at both. Filters: `min_findings` (default 1 -> a clean run pushes
+  # nothing) and `on_status` (empty = any status). A push failure is logged and
+  # dropped — it never affects the run, its report or its exit status.
+  # Needs `requests`; without the package the feature just stays off.
+  # notifiers:
+  #   - type: feishu          # Feishu/Lark custom-robot webhook (plain text)
+  #     url: https://open.feishu.cn/open-apis/bot/v2/hook/xxxxxxxx
+  #     min_findings: 1
+  #     on_status: [failed, agent_required]   # omit for any status
+  #   - type: webhook         # generic: POSTs the summary dict verbatim
+  #     url: http://127.0.0.1:8080/qa/run-summary
+  #     min_findings: 1
+  #     timeout_s: 5
+  logcat_evidence:
+    # Which logcat lines survive the line budget. Ranking is by tag class, not
+    # by level alone: on chatty ROMs the loudest spam is itself E level (an
+    # E/Unity avatar-skeleton burst can fill 300 lines in 5 seconds), so
+    # "drop V/D/I first" does not save the game's own error.
+    #
+    # Tiers: game tags > unknown W/E/F tags > known-noise W/E/F tags > context.
+    # An unlisted tag always falls back to its level, so this list is a
+    # shortcut, never a gate — going stale costs precision, not evidence.
+    #
+    # Game-side tags, kept without any quota.
+    business_tags: ["[mygame]"]
+    # Append to the built-in ROM/vendor noise list (perception/logcat_monitor.py
+    # DEFAULT_NOISE_TAGS). Trailing `*` matches by prefix. Use `noise_tags:` in
+    # place of this key to replace the built-in list outright.
+    extra_noise_tags: []
+    # Per-300-lines caps (scaled down for the 40-line inline excerpt).
+    # `repeat_quota` is what defuses a burst of one identical message without
+    # blacklisting its tag: E/Unity carries real game errors too.
+    noise_tag_quota: 15
+    tag_quota: 60
+    repeat_quota: 3
+
+sentinel:
+  # Anomaly watch riding the background frame monitor (MCP start_monitor).
+  # It covers the window nothing else does: while the engine is suspended on an
+  # `agent` node its run is already finalized, so the screen and logcat go
+  # unwatched for the whole handoff. The sentinel checks the frames the monitor
+  # is capturing anyway and files what it finds as an ordinary findings run
+  # (task "monitor_sentinel", its own recorder and logcat monitor so the
+  # engine's run report is never touched).
+  #
+  # It only looks while no run is in flight *on the same device* — during a run
+  # the task's own watchdogs and logcat poll own that screen, while a sentinel
+  # on another phone keeps watching.
+  #
+  # Sentinel findings are pushed through `findings.notifiers` above, like any
+  # other run: a crash caught during an unattended handoff is exactly what a
+  # chat robot should hear about.
+  enabled: true
+  # Grayscale stddev below which a frame counts as blank. Looser than the
+  # blank_screen recognizer's default: under the lossy H.264 stream backend a
+  # genuinely blank screen still carries compression noise.
+  blank_stddev: 8.0
+  # Consecutive blank frames before it is a stall rather than a scene swap.
+  # One finding per episode; the screen must recover before another can fire.
+  blank_min_frames: 3
+  # Seconds between logcat crash/ANR polls (throttled on the frame callback —
+  # no thread of its own, and far slower than the frame cadence).
+  logcat_poll_interval_s: 5.0
+
+execution:
+  mode: queue_serial
+  default_swipe_duration_ms: 500
+  # Multi-step plans: screenshot after each click/drag and abort if the screen
+  # did not change (the step missed). Off by default.
+  verify_steps: false
+  verify_change_threshold: 0.005

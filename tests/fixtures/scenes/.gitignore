@@ -1,0 +1,15 @@
+# Scene-classifier regression fixtures live here — real screen captures from
+# the game the integrating project is testing, kept out of the repo (same policy
+# as task/templates/*.png): they carry account/build-specific content and are
+# far too heavy to track.
+#
+# The framework's own tests (tests/test_scene_classifier.py) are fully synthetic
+# and need nothing here, so a fresh clone runs green. Drop your captures under
+# <label>/*.png — one folder per scene label your probes register — and calibrate
+# each probe's thresholds against them; a probe measured on zero frames is worse
+# than no probe at all.
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.bmp

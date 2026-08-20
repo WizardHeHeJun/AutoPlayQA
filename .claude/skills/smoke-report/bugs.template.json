@@ -1,0 +1,89 @@
+{
+  "_comment": "冒烟汇报数据源模板。用法见 .claude/skills/smoke-report/SKILL.md；拷贝本文件到 outputs/bug_reports/bugs.json 后按字段填写。统计数字不要手填，由脚本从 report.json 扫出。",
+  "meta": {
+    "title": "AutoPlayQA 冒烟汇总与缺陷报告",
+    "basename": "YYYYMMDD_冒烟报告",
+    "date": "YYYY-MM-DD",
+    "eyebrow": "AutoPlayQA · 自动化冒烟",
+    "device_count": 1,
+    "findings_root": "outputs/findings",
+    "package_root": "outputs/bug_reports",
+    "period": ["YYYY-MM-DD", "YYYY-MM-DD"],
+    "subtitle_tail": "每条缺陷附问题发生那一帧的无损截图、前 ~60 秒 logcat、操作时间线与录屏 MP4，复现步骤均写成人工可照做的操作。",
+    "env": {
+      "周期": "",
+      "服务器": "",
+      "账号 uid": "",
+      "客户端": "",
+      "设备": ""
+    },
+    "task_labels": {
+      "示例_smoke": "模块中文名"
+    },
+    "runs_note_tail": "",
+    "summary_cards": [
+      {
+        "title": "本批最需要立刻处理的事",
+        "blocks": [{ "ul": ["**BUG-00X**：一句话说清影响面与排查方向。"] }]
+      }
+    ],
+    "defects_notes": [],
+    "unverified": [
+      {
+        "claim": "没有落盘文件支撑的断言写在这里",
+        "source": "observed",
+        "note": "为什么没证据 / 复现时要额外验什么"
+      }
+    ]
+  },
+
+  "bugs": [
+    {
+      "id": "BUG-001",
+      "module": "模块名",
+      "headline": "章节标题用的短句",
+      "title": "一句话缺陷标题：现象 + 关键错误码/位置",
+      "severity": "S2",
+      "severity_note": "",
+      "severity_reason": "为什么是这个级别：影响面、是否阻塞下游、是否偶发。",
+      "owner": "服务端 / 客户端 / 策划配置",
+      "owner_reason": "依据哪段日志或哪个模块判断的归属，建议先排查什么。",
+      "repro_rate": "N / N 轮",
+      "date": "YYYY-MM-DD",
+      "tasks": ["示例_smoke"],
+      "runs": {
+        "main": {
+          "path": "outputs/findings/YYYYMMDD/<设备>/<run_id>",
+          "include": ["01_*", "report.json", "report.html"],
+          "exclude": []
+        }
+      },
+      "env": [
+        { "item": "服务器", "value": "", "source": "file", "source_note": "" },
+        { "item": "客户端版本", "value": "", "source": "observed", "source_note": "为什么没证据" }
+      ],
+      "preconditions": ["复现前账号/功能需要满足什么"],
+      "steps": [
+        "人工可照做的第一步（不要出现节点名/锚点/ROI 等工具术语）",
+        "第二步……"
+      ],
+      "actual": [
+        { "p": "界面上看到什么。" },
+        { "code": "关键日志原文（照抄，不要改写）" },
+        { "p": "**关键读法：**这段日志说明了什么。" }
+      ],
+      "shots": [
+        { "run": "main", "file": "01_anomaly_node.png", "title": "截图标题", "caption": "这张图证明了什么。" }
+      ],
+      "expected": [{ "p": "正确行为应该是什么。" }],
+      "repro_detail": [{ "p": "**N / N 轮**……——**有文件证据**（N 份 report.json）。" }],
+      "sections": [],
+      "evidence": [
+        { "name": "现场截图", "run": "main", "file": "01_anomaly_node.png", "desc": "触发检测那一帧的无损截图" },
+        { "name": "logcat", "run": "main", "file": "01_anomaly_node_logcat.log", "desc": "第 X 行为关键报错" },
+        { "name": "可视化报告", "run": "main", "file": "report.html", "desc": "双击浏览器打开即看" }
+      ],
+      "footnotes": []
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+# Environment variables (sensitive credentials)
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Test / tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Claude Code local settings (per-machine permissions) + hook caches
+.claude/settings.local.json
+.claude/.cache/
+
+# KNG per-directory marker (machine-local knowledge-base routing)
+kng.project
+
+# Runtime outputs (generated during execution)
+outputs/*
+!outputs/README.md
+logs/
+*.log
+
+# Project-specific machine-local files (the repo ships *.example instead)
+config.yaml
+CLAUDE.md
+.mcp.json
+
+# Task definitions are local assets: don't upload tasks, keep the folder.
+# open_settings.json is the shipped sample validated by tests
+# (tests/test_navigation_task.py::test_shipped_sample_task_is_valid).
+task/task_definitions/**/*.json
+!task/task_definitions/open_settings.json
+
+# Captured OpenCV templates are local assets: don't upload the images, keep the
+# folder + README (mirrors task_definitions above).
+task/templates/*.png
+task/templates/*.jpg
+task/templates/*.jpeg
+task/templates/*.webp
+task/templates/*.bmp
+
+# Trained YOLO models are local assets: don't upload the models, keep the folder
+# + README (mirrors task/templates above). models.json stays tracked — it is the
+# manifest saying which models a machine is expected to have, and at what
+# version. Training intermediates (checkpoints/engines) are local too; datasets
+# & runs live under outputs/.
+task/models/*.onnx
+task/models/*.pt
+task/models/*.engine
+
+# Pretrained base checkpoints ultralytics downloads next to the script it is run
+# from (yolo11n.pt and friends). Same category as the training intermediates
+# above — fetched on demand, never a repo asset.
+/*.pt
+
+# AI 本地知识库与阶段产物只留本机，不进仓库（2026-08-18 决定）：
+# ai-docs/ 是模块知识库与踩坑记录，PRP/ 是工作流阶段产物，evals/ 是进化层
+# 用例，ai-shared/ 是进化层信号目录。
+ai-shared/
+ai-docs/
+PRP/
+evals/
+
+# .claude/ 只上传「操作产品、产出 QA 交付物」的项目技能及其命令入口
+# （2026-08-18 二次修订）；AI 开发工作流（/dev、PRP、learn/gc、harness
+# 钩子/规则/settings）与个人运行时状态一律留本地。白名单式：
+.claude/*
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/smoke-report/
+!.claude/skills/author-task/
+!.claude/skills/live-record/
+!.claude/skills/explore-task/
+!.claude/skills/babysit-run/
+!.claude/skills/edit-task/
+!.claude/skills/project-lint/
+!.claude/commands/
+.claude/commands/*
+!.claude/commands/babysit.md
+!.claude/commands/smoke-report.md

@@ -1,0 +1,40 @@
+{
+  "_comment": "数据驱动 lint 规则（AutoPlayQA）。新增规则只改本文件，无需动 lint.py。四层过滤: path_contains/file_context(文件级) -> pattern(行级主匹配) -> exclude_patterns(排除误报) -> confirm_patterns(二次确认)。只补 ruff/mypy 抓不到的项目语义违规。",
+  "rules": [
+    {
+      "id": "bare-except",
+      "rule": "异常处理",
+      "pattern": "except\\s*:",
+      "violation_tpl": "裸 except 捕获所有异常: {line}",
+      "fix": "捕获具体异常类型，如 except OSError:；确需兜底用 except Exception: 并记日志",
+      "ref": "python-code.md #异常"
+    },
+    {
+      "id": "print-in-library",
+      "rule": "日志规范",
+      "path_contains": ["/core/", "/perception/", "/task/", "/action/", "/agent/", "/injector/", "/record/", "/utils/"],
+      "pattern": "^\\s*print\\(",
+      "violation_tpl": "库模块使用 print 输出: {line}",
+      "fix": "库模块用 core.logger 的 logging；print 仅限 user_interface/ CLI 与 outputs/ 临时脚本",
+      "ref": "python-code.md #日志"
+    },
+    {
+      "id": "subprocess-in-tests",
+      "rule": "测试隔离",
+      "path_contains": ["/tests/"],
+      "pattern": "subprocess\\.(run|Popen|check_output|check_call|call)\\s*\\(",
+      "exclude_patterns": ["patch", "mock", "Mock", "monkeypatch", "spec=", "#"],
+      "violation_tpl": "测试直接调用 subprocess（依赖真机/真 adb）: {line}",
+      "fix": "测试不依赖真机：subprocess 一律 mock（monkeypatch / unittest.mock.patch）",
+      "ref": "项目测试隔离约定（详见本地 rules/project-root.md 与 CLAUDE.md，均不入库）"
+    },
+    {
+      "id": "llm-dependency",
+      "rule": "无 LLM 依赖",
+      "pattern": "^\\s*(import|from)\\s+(openai|anthropic|langchain|google\\.generativeai|dashscope|zhipuai)\\b",
+      "violation_tpl": "项目内引入 LLM SDK: {line}",
+      "fix": "本项目定位无 LLM 依赖，智能由外部智能体经 MCP/CLI 承担；删除该依赖",
+      "ref": "project-root.md #定位与分层"
+    }
+  ]
+}
