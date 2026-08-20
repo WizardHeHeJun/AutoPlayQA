@@ -18,6 +18,7 @@
 - [目录结构](#目录结构)
 - [测试](#测试)
 - [关于](#关于)
+- [致谢与借鉴](#致谢与借鉴)
 
 ## 功能特性
 
@@ -420,3 +421,16 @@ python -m pytest pipeline_editor/tests -q   # 只跑编辑器后端
 - **平台 / 技术栈**：Windows + Android（ADB，模拟器 / 真机）；Python 3.11；rapidocr 本地 OCR、OpenCV 模板匹配 / ORB 特征匹配、YOLO 目标检测（onnxruntime，可选）、规则式场景分类、uiautomator dump、默认 scrcpy 帧流截图。
 - **接入方式**：MCP 服务器（Claude Code / Codex 即插即用）或本地交互式 CLI。
 - **设计取向**：QA 测试工具——异常即测试发现，要上报留证（watchdogs 断言 / 节点 finding / crash 监控 / 飞行记录仪证据），而非静默绕过。
+
+## 致谢与借鉴
+
+本项目为独立实现（Python + React，无代码复用）。以下是工程迭代记录中**有据可查**的借鉴，在此致谢：
+
+- **[MaaFramework](https://github.com/MaaXYZ/MaaFramework)**:
+任务引擎的思想源头——任务 JSON 以「识别确认 → 执行动作 → `next` 候选轮询（谁先命中走谁）」组织流程、超时走恢复分支，引擎初版即按其 Pipeline 思路搭建；后续的组合识别（`all_of`/`any_of`）、动作级 `repeat` 连发、任务级 `defaults` 块等节点能力也借鉴其流水线特性。
+- **[better-genshin-impact](https://github.com/babalae/better-genshin-impact)**:
+对标其工程实践落地了三件：**空窗期哨兵**（任务跑完 / agent 交接期间后台帧监控继续查白屏与崩溃）、**findings 结果推送**（run 收尾推一条 IM / webhook 汇总）、**模型 manifest**（YOLO 模型版本化登记 `models.json`）。
+- **[MaaPipelineEditor](https://github.com/kqcoxn/MaaPipelineEditor)**:
+本仓库 `pipeline_editor/` 可视化编排器的交互范式参照（画布连线编排、属性面板、JSON 实时同步、内置识别辅助工具），详见 [pipeline_editor/README.md](pipeline_editor/README.md#致谢与借鉴)。
+
+
